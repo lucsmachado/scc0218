@@ -8,6 +8,7 @@ typedef set<string> ss;
 typedef pair<string, int> psi;
 typedef vector<psi> vpsi;
 typedef map<string, vpsi> msvs;
+typedef map<string, bool> msb;
 
 template <typename T>
 void setPrint(set<T> st) {
@@ -25,6 +26,27 @@ void adjListPrint(map<T, vector<pair<T, U>>> adjList) {
         }
         cout << "\n";
     }
+}
+
+void dfs(msvs adjList, msb *visited, string u) {
+    (*visited)[u] = true;
+
+    for (auto v : adjList[u])
+        if (!(*visited)[v.first])
+            dfs(adjList, visited, v.first);
+}
+
+bool graphStronglyConnected(msvs adjList, ss nodes, string root) {
+    msb visited;
+    for (auto node : nodes)
+        visited[node] = false;
+
+    dfs(adjList, &visited, root);
+    for (auto node : nodes)
+        if (!visited[node])
+            return false;
+
+    return true;
 }
 
 int main() {
@@ -57,7 +79,11 @@ int main() {
 
         string start;
         cin >> start;
-        if (nodes.find(start) != nodes.end())
-            cout << "START @ " << start << "\n";
+        cout << "START @ " << start << "\n";
+
+        if (!graphStronglyConnected(adjList, nodes, start)) {
+            cout << "Impossible\n";
+            continue;
+        }
     }
 }
